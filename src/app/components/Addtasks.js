@@ -1,88 +1,3 @@
-// "use client";
-// import React, { useEffect, useState } from "react";
-
-// function Addtasks() {
-//   const [task, setTask] = useState("");
-//   const [taskslist, setTaskslist] = useState([]);
-//   const fetchtasks = async () => {
-//     try {
-//       const response = await fetch("http://localhost:3000/api/products");
-//       if (response.ok) {
-//         const data = await response.json();
-//         setTaskslist(data);
-//       } else {
-//         console.log("error fetching tasks");
-//       }
-//     } catch (error) {
-//       console.log("network error ");
-//     }
-//   };
-//   useEffect(() => {
-//     fetchtasks();
-//   }, []);
-
-//   const handleInputChange = (e) => {
-//     setTask(e.target.value);
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     if (!task.trim()) {
-//       alert("please enter a task");
-//       return;
-//     }
-
-//     try {
-//       const response = await fetch("http://localhost:3000/api/products", {
-//         method: "post",
-//         body: JSON.stringify({ task }),
-//       });
-//       if (response.ok) {
-//         const result = await response.json();
-//         setTaskslist([...taskslist, result]);
-//         setTask("");
-//       } else {
-//         console.log("erro adding tasks");
-//       }
-//     } catch (error) {
-//       console.log("network error", error);
-//     }
-//   };
-//   return (
-//     <div className="max-w-md mx-auto p-6">
-//       <h1 className="text-2xl font-bold text-center mb-4">Add a Task</h1>
-//       <form onSubmit={handleSubmit} className="flex mb-4">
-//         <input
-//           type="text"
-//           value={task}
-//           onChange={handleInputChange}
-//           placeholder="Enter a new task"
-//           required
-//           className="flex-grow p-2 border border-gray-300 rounded-l-md focus:outline-none"
-//         />
-//         <button
-//           type="submit"
-//           className="p-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600"
-//         >
-//           Add Task
-//         </button>
-//       </form>
-
-//       <h2 className="text-xl font-semibold mb-2">Tasks List</h2>
-//       <ul className="list-disc pl-5">
-//         {taskslist.map((task) => (
-//           <li key={task._id} className="mb-2">
-//             {task.task}
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// }
-
-// export default Addtasks;
-
 "use client";
 import React, { useEffect, useState } from "react";
 
@@ -92,7 +7,7 @@ function Addtasks() {
 
   const fetchtasks = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/products");
+      const response = await fetch("/api/products");
       if (response.ok) {
         const data = await response.json();
         setTaskslist(data);
@@ -121,7 +36,7 @@ function Addtasks() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/products", {
+      const response = await fetch("/api/products", {
         method: "POST",
         body: JSON.stringify({ task }),
         headers: {
@@ -142,7 +57,7 @@ function Addtasks() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch("http://localhost:3000/api/products", {
+      const response = await fetch("/api/products", {
         method: "DELETE",
         body: JSON.stringify({ id }),
         headers: {
