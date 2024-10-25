@@ -4,6 +4,9 @@ import React, { useEffect, useState } from "react";
 function Addtasks() {
   const [task, setTask] = useState("");
   const [taskslist, setTaskslist] = useState([]);
+  const [editingTaskId, setEditingTaskId] = useState(null);
+  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [editTask, setEditTask] = useState("");
 
   const fetchtasks = async () => {
     try {
@@ -55,6 +58,40 @@ function Addtasks() {
     }
   };
 
+  const handleEdit = (task) => {
+    setEditTask(task.task);
+    setEditingTaskId(task._id);
+    setShowEditPopup(true);
+  };
+
+  const updateTask = async () => {
+    try {
+      const response = await fetch(`/api/products/${editingTaskId}`, {
+        method: "PUT",
+        body: JSON.stringify({ task: editTask }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        await fetchtasks();
+        resetForm();
+      } else {
+        console.log("Error updating task");
+      }
+    } catch (error) {
+      console.log("Network error", error);
+    }
+  };
+
+  const resetForm = () => {
+    setTask("");
+    setEditingTaskId(null);
+    setEditTask("");
+    setShowEditPopup(false);
+  };
+
   const handleDelete = async (id) => {
     try {
       const response = await fetch("/api/products", {
@@ -99,22 +136,60 @@ function Addtasks() {
       {taskslist.length === 0 ? (
         <p className="text-gray-500">No tasks available.</p>
       ) : (
-        <ul className="pl-3 text-black ">
+        <ul className=" text-black">
           {taskslist.map((task) => (
             <li
               key={task._id}
-              className="mb-2 bg-black/10 p-3 flex justify-between items-center"
+              className="mb-2 px-2 bg-black/10 py-2 flex justify-between items-center"
             >
-              {task.task}
-              <button
-                onClick={() => handleDelete(task._id)}
-                className="ml-4 p-1 bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                Delete
-              </button>
+              <div> {task.task} </div>
+
+              <div className="flex flex-row">
+                <button
+                  onClick={() => handleEdit(task)}
+                  className="ml-4 p-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(task._id)}
+                  className="ml-4 p-1 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Delete
+                </button>
+              </div>
             </li>
           ))}
         </ul>
+      )}
+
+      {showEditPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+          <div className="bg-white w-[400px] p-4 rounded shadow-lg">
+            <h2 className="text-xl font-sans mb-2">Edit Task</h2>
+            <input
+              type="text"
+              value={editTask}
+              onChange={(e) => setEditTask(e.target.value)}
+              placeholder="Edit task"
+              className="flex-grow w-full p-1 border border-gray-300 rounded focus:outline-none"
+            />
+            <div className="mt-3">
+              <button
+                onClick={updateTask}
+                className="p-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Update Task
+              </button>
+              <button
+                onClick={resetForm}
+                className="ml-2 p-2 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
